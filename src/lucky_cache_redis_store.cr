@@ -1,6 +1,5 @@
-# TODO: Write documentation for `LuckyCacheRedisStore`
+require "./lucky_cache_redis_store/**"
+
 module LuckyCacheRedisStore
   VERSION = "0.1.0"
-
-  # TODO: Put your code here
 end

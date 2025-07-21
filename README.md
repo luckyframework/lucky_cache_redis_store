@@ -1,7 +1,6 @@
-# LuckyCacheRedisStore
+# LuckyCache Redis Store
 
-An adapter for [LuckyCache](https://github.com/luckyframework/lucky_cache/) to store
-data in Redis.
+A Redis storage backend for [LuckyCache](https://github.com/luckyframework/lucky_cache/), providing distributed caching capabilities for Lucky Framework applications.
 
 ## Installation
 
@@ -20,14 +19,84 @@ data in Redis.
 ## Usage
 
 ```crystal
+require "lucky_cache"
 require "lucky_cache_redis_store"
+require "redis"
+
+LuckyCache.configure do |settings|
+  settings.storage = LuckyCache::RedisStore.new(
+    Redis::Client.new(host: "localhost", port: 6379),
+    prefix: "myapp:cache:"
+  )
+  settings.default_duration = 5.minutes
+end
 ```
 
-TODO: Write usage instructions here
+### Basic Usage
+
+```crystal
+cache = LuckyCache.settings.storage
+
+# Write to cache
+cache.write("my_key", expires_in: 1.hour) { "my value" }
+
+# Read from cache
+if item = cache.read("my_key")
+  puts item.value # => "my value"
+end
+
+# Fetch (read-through cache)
+value = cache.fetch("computed_key", as: String, expires_in: 10.minutes) do
+  # This block is only executed if the key doesn't exist
+  expensive_computation
+end
+
+# Delete from cache
+cache.delete("my_key")
+
+# Clear all cached items with the configured prefix
+cache.flush
+```
+
+### Supported Types
+
+The Redis store supports the following types:
+- Basic types: `String`, `Int32`, `Int64`, `Float64`, `Bool`, `Time`, `UUID`, `JSON::Any`
+- Arrays of basic types: `Array(String)`, `Array(Int32)`, `Array(Int64)`, `Array(Float64)`, `Array(Bool)`
+
+**Note:** Custom objects that include `LuckyCache::Cachable` are not supported by RedisStore due to serialization limitations. Use MemoryStore for caching custom objects.
+
+### Workaround for Custom Objects
+
+You can cache JSON representations of your objects:
+
+```crystal
+# Instead of caching the object directly
+# cache.write("user:123") { User.new("test@example.com") } # This will raise an error
+
+# Cache a JSON representation
+user_data = {"id" => 123, "email" => "test@example.com"}
+cache.write("user:123") { JSON::Any.new(user_data) }
+
+# Retrieve and reconstruct
+cached_data = cache.read("user:123").not_nil!.value.as(JSON::Any)
+user = User.new(cached_data["email"].as_s)
+```
 
 ## Development
 
-TODO: Write development instructions here
+To run the tests:
+
+1. Make sure Redis is running locally on the default port (6379)
+2. Run `crystal spec`
+
+The test suite includes tests for:
+- Basic type caching
+- Array type caching
+- Expiration functionality
+- Key deletion and cache flushing
+- Custom prefix support
+- Error handling for non-serializable types
 
 ## Contributing
 
@@ -39,4 +108,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [your-name-here](https://github.com/your-github-user) - creator and maintainer
+- [Jeremy Woertink](https://github.com/jwoertink) - creator and maintainer
