@@ -8,9 +8,15 @@ crystal: '>= 1.14.1'
 
 license: MIT
 
+dependencies:
+  redis:
+    github: jgaskins/redis
+  lucky_cache:
+    github: luckyframework/lucky_cache
+
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
     version: ~> 1.5.0
-  lucky_cache:
-    github: luckyframework/lucky_cache
+  timecop:
+    github: crystal-community/timecop.cr
