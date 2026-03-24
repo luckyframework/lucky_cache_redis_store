@@ -21,9 +21,9 @@ module LuckyCache
       data = yield
 
       # For Redis storage, we need to check if the data is serializable
-      # Custom Cachable objects cannot be serialized to JSON without custom serialization logic
+      # Custom Cacheable objects cannot be serialized to JSON without custom serialization logic
       unless serializable?(data)
-        raise ArgumentError.new("RedisStore cannot serialize custom Cachable objects. Use MemoryStore for custom objects or store serializable representations (Hash, NamedTuple, JSON::Any).")
+        raise ArgumentError.new("RedisStore cannot serialize custom Cacheable objects. Use MemoryStore for custom objects or store serializable representations (Hash, NamedTuple, JSON::Any).")
       end
 
       validate_expires_in!(expires_in)
@@ -109,7 +109,7 @@ module LuckyCache
       end
     end
 
-    private def serialize_cache_item(value : CachableTypes, expires_in : Time::Span, expiration : Time) : String
+    private def serialize_cache_item(value : CacheableTypes, expires_in : Time::Span, expiration : Time) : String
       {
         "value"         => serialize_value(value),
         "expires_in_ms" => expires_in.total_milliseconds.to_i64,
@@ -138,7 +138,7 @@ module LuckyCache
       Time::Span.new(nanoseconds: milliseconds * 1_000_000)
     end
 
-    private def serialize_value(value : CachableTypes) : JSON::Any
+    private def serialize_value(value : CacheableTypes) : JSON::Any
       case value
       when Array
         serialize_array_value(value)
@@ -147,7 +147,7 @@ module LuckyCache
       end
     end
 
-    private def serialize_scalar_value(value : CachableTypes) : JSON::Any
+    private def serialize_scalar_value(value : CacheableTypes) : JSON::Any
       case value
       when String
         JSON::Any.new(value)
@@ -187,7 +187,7 @@ module LuckyCache
       end
     end
 
-    private def deserialize_value(json : JSON::Any, type_name : String) : CachableTypes
+    private def deserialize_value(json : JSON::Any, type_name : String) : CacheableTypes
       if type_name.starts_with?("Array(")
         deserialize_array_value(json, type_name)
       else
@@ -195,7 +195,7 @@ module LuckyCache
       end
     end
 
-    private def deserialize_scalar_value(json : JSON::Any, type_name : String) : CachableTypes
+    private def deserialize_scalar_value(json : JSON::Any, type_name : String) : CacheableTypes
       case type_name
       when "String"
         json.as_s
@@ -218,7 +218,7 @@ module LuckyCache
       end
     end
 
-    private def deserialize_array_value(json : JSON::Any, type_name : String) : CachableTypes
+    private def deserialize_array_value(json : JSON::Any, type_name : String) : CacheableTypes
       case type_name
       when "Array(String)"
         json.as_a.map(&.as_s)
@@ -235,7 +235,7 @@ module LuckyCache
       end
     end
 
-    private def determine_type(value : CachableTypes) : String
+    private def determine_type(value : CacheableTypes) : String
       case value
       when Array
         determine_array_type(value)
@@ -244,7 +244,7 @@ module LuckyCache
       end
     end
 
-    private def determine_scalar_type(value : CachableTypes) : String
+    private def determine_scalar_type(value : CacheableTypes) : String
       case value
       when String
         "String"

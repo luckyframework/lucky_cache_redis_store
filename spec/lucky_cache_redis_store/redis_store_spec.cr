@@ -49,7 +49,7 @@ describe LuckyCache::RedisStore do
   describe "#fetch" do
     it "raises an error for custom cachable objects" do
       with_cache do |cache, _|
-        expect_raises(ArgumentError, "RedisStore cannot serialize custom Cachable objects") do
+        expect_raises(ArgumentError, "RedisStore cannot serialize custom Cacheable objects") do
           cache.write("user") { User.new("test@example.com") }
         end
       end
@@ -280,7 +280,7 @@ describe LuckyCache::RedisStore do
 end
 
 class User
-  include LuckyCache::Cachable
+  include LuckyCache::Cacheable
   property email : String
 
   def initialize(@email : String)

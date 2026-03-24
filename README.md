@@ -73,7 +73,7 @@ The Redis store supports the following types:
 - Basic types: `String`, `Int32`, `Int64`, `Float64`, `Bool`, `Time`, `UUID`, `JSON::Any`
 - Arrays of basic types: `Array(String)`, `Array(Int32)`, `Array(Int64)`, `Array(Float64)`, `Array(Bool)`
 
-**Note:** Custom objects that include `LuckyCache::Cachable` are not supported by RedisStore due to serialization limitations. Use MemoryStore for caching custom objects.
+**Note:** Custom objects that include `LuckyCache::Cacheable` are not supported by RedisStore due to serialization limitations. Use MemoryStore for caching custom objects.
 
 ### Workaround for Custom Objects
 
