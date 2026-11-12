@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.18.2">
+<meta name="generator" content="Crystal Docs 1.21.0">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="lucky_cache_redis_store">
 
@@ -61,11 +61,6 @@
       <a href="LuckyCache.html">LuckyCache</a>
       
         <ul>
-  
-  <li class=" " data-id="lucky_cache_redis_store/LuckyCache/CacheItem" data-name="luckycache::cacheitem">
-      <a href="LuckyCache/CacheItem.html">CacheItem</a>
-      
-    </li>
   
   <li class=" " data-id="lucky_cache_redis_store/LuckyCache/RedisStore" data-name="luckycache::redisstore">
       <a href="LuckyCache/RedisStore.html">RedisStore</a>
@@ -150,6 +145,31 @@ cache.delete(<span class="s">&quot;my_key&quot;</span>)
 
 <span class="c"># Clear all cached items with the configured prefix</span>
 cache.flush</code></pre>
+<h2><a id="counters" class="anchor" href="#counters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Counters</h2>
+<blockquote>
+<p>[!NOTE]
+Unlike the <code>LuckyCache::MemoryStore</code> which stores counters as JSON,
+this uses the native Redis <code>INCRBY</code> which stores a scalar value which
+means it's not backwards compatible with using <code>read</code>/<code>write</code> directly</p>
+</blockquote>
+<pre><code class="language-crystal">cache.increment(<span class="s">&quot;visits&quot;</span>)                       <span class="c"># =&gt; 1</span>
+cache.increment(<span class="s">&quot;visits&quot;</span>, by: <span class="n">5</span>)                <span class="c"># =&gt; 6</span>
+cache.decrement(<span class="s">&quot;visits&quot;</span>)                       <span class="c"># =&gt; 5</span>
+cache.increment(<span class="s">&quot;logins&quot;</span>, expires_in: <span class="n">1</span>.minute) <span class="c"># =&gt; 1</span></code></pre>
+<ul>
+<li>Counters use Redis's native <code>INCRBY</code>, so no updates are lost when several fibers,
+threads, or processes change the same key.</li>
+<li>A missing or expired key starts from 0 and expires after <code>expires_in</code>. An existing key
+keeps the expiration it already had.</li>
+<li>Counters are stored as plain Redis integers, separate from values saved with <code>write</code>.
+Calling <code>increment</code> on a key created with <code>write</code> raises <code>ArgumentError</code>, and <code>read</code>
+returns <code>nil</code> for a counter. Use <code>increment(key, by: 0)</code> to get the current count.</li>
+<li>Going past the <code>Int64</code> range raises <code>OverflowError</code>.</li>
+</ul>
 <h2><a id="expiration-semantics" class="anchor" href="#expiration-semantics">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>

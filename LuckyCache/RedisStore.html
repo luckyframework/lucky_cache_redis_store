@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.18.2">
+<meta name="generator" content="Crystal Docs 1.21.0">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="lucky_cache_redis_store">
 
@@ -61,11 +61,6 @@
       <a href="../LuckyCache.html">LuckyCache</a>
       
         <ul>
-  
-  <li class=" " data-id="lucky_cache_redis_store/LuckyCache/CacheItem" data-name="luckycache::cacheitem">
-      <a href="../LuckyCache/CacheItem.html">CacheItem</a>
-      
-    </li>
   
   <li class=" current" data-id="lucky_cache_redis_store/LuckyCache/RedisStore" data-name="luckycache::redisstore">
       <a href="../LuckyCache/RedisStore.html">RedisStore</a>
@@ -128,7 +123,7 @@
   </h2>
   
     
-      <a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L5" target="_blank">
+      <a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L5" target="_blank">
         lucky_cache_redis_store/redis_store.cr
       </a>
     
@@ -193,6 +188,11 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
+        <a href="#decrement%28key%3ACacheKey%2Cby%3AInt%3D1%2C%2A%2Cexpires_in%3ATime%3A%3ASpan%3DLuckyCache.settings.default_duration%29%3AInt64-instance-method" class="signature"><strong>#decrement</strong>(key : CacheKey, by : Int = <span class="n">1</span>, *, expires_in : Time::Span = <span class="t">LuckyCache</span>.settings.default_duration) : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#delete%28key%3ACacheKey%29-instance-method" class="signature"><strong>#delete</strong>(key : CacheKey)</a>
         
       </li>
@@ -209,6 +209,11 @@
     
       <li class="entry-summary">
         <a href="#flush%3ANil-instance-method" class="signature"><strong>#flush</strong> : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#increment%28key%3ACacheKey%2Cby%3AInt%3D1%2C%2A%2Cexpires_in%3ATime%3A%3ASpan%3DLuckyCache.settings.default_duration%29%3AInt64-instance-method" class="signature"><strong>#increment</strong>(key : CacheKey, by : Int = <span class="n">1</span>, *, expires_in : Time::Span = <span class="t">LuckyCache</span>.settings.default_duration) : Int64</a>
         
       </li>
     
@@ -308,7 +313,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L11" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L11" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -329,6 +334,22 @@
     Instance Method Detail
   </h2>
   
+    <div class="entry-detail" id="decrement(key:CacheKey,by:Int=1,*,expires_in:Time::Span=LuckyCache.settings.default_duration):Int64-instance-method">
+      <div class="signature">
+        
+        def <strong>decrement</strong>(key : CacheKey, by : Int = <span class="n">1</span>, *, expires_in : Time::Span = <span class="t">LuckyCache</span>.settings.default_duration) : Int64
+
+        <a class="method-permalink" href="#decrement%28key%3ACacheKey%2Cby%3AInt%3D1%2C%2A%2Cexpires_in%3ATime%3A%3ASpan%3DLuckyCache.settings.default_duration%29%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L99" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="delete(key:CacheKey)-instance-method">
       <div class="signature">
         
@@ -340,7 +361,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L39" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L39" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -356,7 +377,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L58" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L58" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -372,7 +393,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L71" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L71" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -388,7 +409,23 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L44" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L44" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="increment(key:CacheKey,by:Int=1,*,expires_in:Time::Span=LuckyCache.settings.default_duration):Int64-instance-method">
+      <div class="signature">
+        
+        def <strong>increment</strong>(key : CacheKey, by : Int = <span class="n">1</span>, *, expires_in : Time::Span = <span class="t">LuckyCache</span>.settings.default_duration) : Int64
+
+        <a class="method-permalink" href="#increment%28key%3ACacheKey%2Cby%3AInt%3D1%2C%2A%2Cexpires_in%3ATime%3A%3ASpan%3DLuckyCache.settings.default_duration%29%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L79" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -396,7 +433,7 @@
     <div class="entry-detail" id="read(key:CacheKey):CacheItem|Nil-instance-method">
       <div class="signature">
         
-        def <strong>read</strong>(key : CacheKey) : <a href="../LuckyCache/CacheItem.html">CacheItem</a> | Nil
+        def <strong>read</strong>(key : CacheKey) : CacheItem | Nil
 
         <a class="method-permalink" href="#read%28key%3ACacheKey%29%3ACacheItem%7CNil-instance-method">#</a>
       </div>
@@ -404,7 +441,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L14" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L14" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -420,7 +457,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L79" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L103" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -436,7 +473,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/94124d1dc6f076473dd0063db392c17357da7a4a/src/lucky_cache_redis_store/redis_store.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/luckyframework/lucky_cache_redis_store/blob/62ac843b45d7f045d30b24e5da41e93ba88eee36/src/lucky_cache_redis_store/redis_store.cr#L20" target="_blank">View source</a>]
         
       </div>
     </div>
