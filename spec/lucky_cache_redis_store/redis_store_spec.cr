@@ -39,7 +39,7 @@ describe LuckyCache::RedisStore do
 
         raise "standalone require failed\nstdout:\n#{output}\nstderr:\n#{error}" unless status.success?
 
-        File.exists?(binary_path).should eq(true)
+        File.exists?(binary_path).should be_true
       ensure
         File.delete(binary_path) if File.exists?(binary_path)
       end
@@ -59,7 +59,7 @@ describe LuckyCache::RedisStore do
       with_cache do |cache, _|
         cache.fetch("string:key", as: String) { "test" }.should eq("test")
         cache.fetch("int:key", as: Int64) { 0_i64 }.should eq(0_i64)
-        cache.fetch("bool:key", as: Bool) { false }.should eq(false)
+        cache.fetch("bool:key", as: Bool) { false }.should be_false
         cache.fetch("time:key", as: Time) { Time.local(1999, 10, 31, 18, 30) }.should eq(Time.local(1999, 10, 31, 18, 30))
       end
     end
@@ -106,10 +106,10 @@ describe LuckyCache::RedisStore do
         sleep 1.second
         item = read_item(cache, "key")
         item.expires_in.should eq(2.seconds)
-        item.expired?.should eq(false)
+        item.expired?.should be_false
 
         sleep 1200.milliseconds
-        item.expired?.should eq(true)
+        item.expired?.should be_true
         cache.read("key").should be_nil
       end
     end
@@ -173,6 +173,103 @@ describe LuckyCache::RedisStore do
         expect_raises(ArgumentError, "expires_in must be at least 1 millisecond") do
           cache.write("negative", expires_in: -1.second) { "value" }
         end
+      end
+    end
+  end
+
+  describe "#increment" do
+    it "starts a missing key at the increment amount" do
+      with_cache do |cache, _|
+        cache.increment("hits").should eq(1_i64)
+      end
+    end
+
+    it "adds to the existing value" do
+      with_cache do |cache, _|
+        cache.increment("hits")
+        cache.increment("hits").should eq(2_i64)
+        cache.increment("hits", by: 5).should eq(7_i64)
+      end
+    end
+
+    it "keeps the original expiration when incrementing an existing key" do
+      with_cache do |cache, _|
+        cache.increment("hits", expires_in: 2.seconds)
+
+        sleep 1.second
+        cache.increment("hits", expires_in: 1.minute).should eq(2_i64)
+
+        sleep 1200.milliseconds
+        cache.increment("hits", expires_in: 1.second).should eq(1_i64)
+      end
+    end
+
+    it "starts over once the key has expired" do
+      with_cache do |cache, _|
+        cache.increment("hits", expires_in: 1.second)
+        cache.increment("hits", expires_in: 1.second)
+
+        sleep 1200.milliseconds
+        cache.increment("hits", expires_in: 1.second).should eq(1_i64)
+      end
+    end
+
+    it "raises when the key was created with write" do
+      with_cache do |cache, _|
+        cache.write("hits") { 10 }
+
+        expect_raises(ArgumentError, "Cannot increment") do
+          cache.increment("hits")
+        end
+        read_item(cache, "hits").value.should eq(10)
+      end
+    end
+
+    it "supports the full Int64 range" do
+      with_cache do |cache, _|
+        cache.increment("hits", by: Int64::MAX).should eq(Int64::MAX)
+      end
+    end
+
+    it "raises when the result does not fit in an Int64" do
+      with_cache do |cache, _|
+        cache.increment("hits", by: Int64::MAX)
+
+        expect_raises(OverflowError) do
+          cache.increment("hits")
+        end
+        cache.increment("hits", by: 0).should eq(Int64::MAX)
+      end
+    end
+
+    it "rejects ttl values below one millisecond" do
+      with_cache do |cache, _|
+        expect_raises(ArgumentError, "expires_in must be at least 1 millisecond") do
+          cache.increment("hits", expires_in: 500.microseconds)
+        end
+      end
+    end
+
+    it "uses the configured prefix" do
+      with_cache(prefix: "counters:") do |cache, redis_client|
+        cache.increment("hits")
+        redis_client.get("counters:hits").should eq("1")
+      end
+    end
+  end
+
+  describe "#decrement" do
+    it "subtracts from the existing value" do
+      with_cache do |cache, _|
+        cache.increment("hits", by: 5)
+        cache.decrement("hits").should eq(4_i64)
+        cache.decrement("hits", by: 3).should eq(1_i64)
+      end
+    end
+
+    it "starts a missing key below zero" do
+      with_cache do |cache, _|
+        cache.decrement("hits").should eq(-1_i64)
       end
     end
   end

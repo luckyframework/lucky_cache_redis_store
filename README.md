@@ -54,6 +54,29 @@ cache.delete("my_key")
 cache.flush
 ```
 
+## Counters
+
+> [!NOTE]
+> Unlike the `LuckyCache::MemoryStore` which stores counters as JSON,
+> this uses the native Redis `INCRBY` which stores a scalar value which
+> means it's not backwards compatible with using `read`/`write` directly
+
+```crystal
+cache.increment("visits")                       # => 1
+cache.increment("visits", by: 5)                # => 6
+cache.decrement("visits")                       # => 5
+cache.increment("logins", expires_in: 1.minute) # => 1
+```
+
+- Counters use Redis's native `INCRBY`, so no updates are lost when several fibers,
+  threads, or processes change the same key.
+- A missing or expired key starts from 0 and expires after `expires_in`. An existing key
+  keeps the expiration it already had.
+- Counters are stored as plain Redis integers, separate from values saved with `write`.
+  Calling `increment` on a key created with `write` raises `ArgumentError`, and `read`
+  returns `nil` for a counter. Use `increment(key, by: 0)` to get the current count.
+- Going past the `Int64` range raises `OverflowError`.
+
 ## Expiration Semantics
 
 - `expires_in` is stored with millisecond precision.
@@ -70,6 +93,7 @@ cache.flush
 ### Supported Types
 
 The Redis store supports the following types:
+
 - Basic types: `String`, `Int32`, `Int64`, `Float64`, `Bool`, `Time`, `UUID`, `JSON::Any`
 - Arrays of basic types: `Array(String)`, `Array(Int32)`, `Array(Int64)`, `Array(Float64)`, `Array(Bool)`
 
@@ -103,6 +127,7 @@ To run the tests:
 2. Run `crystal spec`
 
 The test suite includes tests for:
+
 - Basic type caching
 - Array type caching
 - Millisecond TTL handling and TTL validation
