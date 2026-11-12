@@ -76,6 +76,30 @@ module LuckyCache
       end
     end
 
+    def increment(key : CacheKey, by : Int = 1, *, expires_in : Time::Span = LuckyCache.settings.default_duration) : Int64
+      validate_expires_in!(expires_in)
+      redis_key = prefixed_key(key)
+
+      results = redis.multi do |txn|
+        txn.set(redis_key, "0", ex: expires_in, nx: true)
+        txn.incrby(redis_key, by.to_i64)
+      end
+
+      case total = results.try(&.last?)
+      when Int64
+        total
+      when Redis::Error
+        raise OverflowError.new("Cannot increment #{key.inspect}: #{total.message}") if total.message.to_s.includes?("overflow")
+        raise ArgumentError.new("Cannot increment #{key.inspect}: #{total.message}")
+      else
+        raise ArgumentError.new("Cannot increment #{key.inspect}")
+      end
+    end
+
+    def decrement(key : CacheKey, by : Int = 1, *, expires_in : Time::Span = LuckyCache.settings.default_duration) : Int64
+      increment(key, -by.to_i64, expires_in: expires_in)
+    end
+
     def size : Int32
       count = 0
       each_prefixed_key { count += 1 }
@@ -127,7 +151,7 @@ module LuckyCache
       expiration = Time.unix_ms(parsed["expires_at_ms"].as_i64)
       value = deserialize_value(value_json, type_name)
 
-      return nil if expiration <= Time.utc
+      return if expiration <= Time.utc
 
       CacheItem.new(value, expires_in, expiration)
     rescue

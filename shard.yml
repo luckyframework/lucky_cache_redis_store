@@ -4,7 +4,7 @@ version: 0.2.0
 authors:
   - Jeremy Woertink <jeremywoertink@gmail.com>
 
-crystal: ">= 1.16.3"
+crystal: ">= 1.18.2"
 
 license: MIT
 
@@ -13,11 +13,12 @@ dependencies:
     github: jgaskins/redis
   lucky_cache:
     github: luckyframework/lucky_cache
+    branch: main
 
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 1.6.4
+    version: ~> 1.7.0
   timecop:
     github: crystal-community/timecop.cr
     version: ~> 0.5.0
